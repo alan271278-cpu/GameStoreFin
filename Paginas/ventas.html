@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameStore</title>
+    <script src="../Dominio/Clases/venta.js"></script>
+    <script src="../Dominio/Servicios/memoria.js"></script>
+    <script src="../Dominio/Controladora/ventasControladores.js"></script>
+    <link rel="stylesheet" href="../Css/estilos.css">
+</head>
+<body onload="CargoDatosVentas()">
+    <center>
+        <h1>GameStore</h1>
+        <a href="../index.html">HomeStore</a>
+        <form id="dep">
+            <h3 class="titulo">Ventas</h3>
+            <section>
+                <div class="campos">
+                    <label for="codigo">Código: </label>
+                    <input type="number" id="codigo">
+
+                    <label for="fecha">Fecha: </label>
+                    <input type="date" id="fecha">
+
+                    <label for="vendedor">Vendedor: </label>
+                    <select id="codigo-vendedor"></select>
+
+                    <label for="game">Game: </label>
+                    <select id="codigo-game" onchange="CargarPrecioGame()"></select>
+
+                    <label for="precio">Precio: </label>
+                    <input type="number" id="precio-game" disabled>
+                    
+                    <label for="cantidad">Cantidad: </label>
+                    <input type="number" id="cantidad" onblur="CalculoTotal()">
+
+                    <label for="total">Total: </label>
+                    <input type="text" id="total" disabled>
+                </div>
+                <div class="botones">
+                    <input class="btn_agregar" type="button" value="Agregar" onclick="AgregarVenta()">
+                    <!-- <input class="btn_modificar" type="button" value="Modificar" onclick="ModificarVenta()"> -->
+                    <input class="btn_eliminar" type="button" value="Eliminar" onclick="EliminarVenta()">
+                    <input class="btn_limpiar" type="button" value="Limpiar" onclick="InicializarVenta()">
+                </div>
+            </section>
+        </form>
+
+        <div class="listado">
+            <select id="lista-ventas" onchange="SeleccionarVenta()" size="6"></select>
+        </div>
+    </center>
+
+</body>
+</html>

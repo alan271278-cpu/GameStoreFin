@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store</title>
+    <script src="../Dominio/Servicios/memoria.js"></script>
+    <script src="../Dominio/Controladora/estadisticasControladores.js"></script>
+    <link rel="stylesheet" href="../Css/estilos.css">
+</head>
+<body onload="CargoDatosEstadisticas()">
+    <center>
+        <h1>GameStore</h1>
+        <a href="../index.html">HomeStore</a>
+        <form id="dep">
+            <h3 class="titulo">Estadísticas</h3>
+            <section>
+                <div class="campos">
+                    <label for="totalRecaudado">Total recaudado: </label>
+                    <input type="text" id="totalRecaudado" disabled>
+
+                    <label for="masVendido">Juego más vendido: </label>
+                    <input type="text" id="masVendido" disabled>
+
+                    <label for="mejorVendedor">Mejor vendedor: </label>
+                    <input type="text" id="mejorVendedor" disabled>
+                    
+                </div>
+                <div class="botones">
+                    <!-- <input class="btn_agregar" type="button" value="Agregar" onclick="AgregarVendedor()">
+                    <input class="btn_modificar" type="button" value="Modificar" onclick="ModificarVendedor()">
+                    <input class="btn_eliminar" type="button" value="Eliminar" onclick="EliminarVendedor()">
+                    <input class="btn_limpiar" type="button" value="Limpiar" onclick="InicializarVendedor()"> -->
+                </div>
+            </section>
+        </form>
+
+        <div class="listado">
+            <label for="games-con-stock">Juegos con Stock</label>
+            <br>
+            <select id="games-con-stock" size="6"></select>
+        </div>
+        
+    </center>
+
+</body>
+</html>

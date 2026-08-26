@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameStore</title>
+    <script src="../Dominio/Clases/vendedor.js"></script>
+    <script src="../Dominio/Servicios/memoria.js"></script>
+    <script src="../Dominio/Controladora/vendedoresControladores.js"></script>
+    <link rel="stylesheet" href="../Css/estilos.css">
+</head>
+<body onload="CargoDatosVendedor()">
+    <center>
+        <h1>GameStore</h1>
+
+          <a href="../index.html">HomeStore</a>
+
+        <form id="dep">
+            <h3 class="titulo">ABM Vendedores</h3>
+            <section>
+                     
+                <div class="campos">
+                    <label for="codigo">Código: </label>
+                    <input type="text" id="codigo">
+
+                    <label for="nombre">Nombre: </label>
+                    <input type="text" id="nombre">
+                    
+                    <label for="cedula">Cédula: </label>
+                    <input type="text" id="cedula">
+                </div>
+                <div class="botones">
+                    <input class="btn_agregar" type="button" value="Agregar" onclick="AgregarVendedor()">
+                    <input class="btn_modificar" type="button" value="Modificar" onclick="ModificarVendedor()">
+                    <input class="btn_eliminar" type="button" value="Eliminar" onclick="EliminarVendedor()">
+                     <input class="btn_limpiar" type="button" value="Limpiar" onclick="InicializarVendedor()">
+                </div>
+            </section>
+        </form>
+
+        <div class="listado">
+            <select id="lista-vendedores" onchange="SeleccionarVendedor()" size="6"></select>
+        </div>
+        
+    </center>
+
+</body>
+</html>

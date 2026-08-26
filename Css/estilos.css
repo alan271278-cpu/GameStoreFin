@@ -1,0 +1,523 @@
+:root {
+    --color-fondo: #1b2838;
+    --color-header: #171a21;
+    --color-superficie: #202f42;
+    --color-superficie-alt: #26374c;
+    --color-borde: #324863;
+    --color-principal: #2a9fd6;
+    --color-principal-oscuro: #033b5c;
+    --color-peligro: #7a2e2e;
+    --color-peligro-claro: #a83c3c;
+    --color-texto: #eaf1f8;
+    --color-texto-secundario: #8fa3bd;
+
+    --radio: 0.6rem;
+    --radio-lg: 1rem;
+    --sombra: 0 10px 25px rgba(0, 0, 0, 0.35);
+    --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.25);
+    --transicion: 0.25s ease;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--color-fondo);
+    color: var(--color-texto);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ===== Header (index.html) ===== */
+
+header {
+    background: var(--color-header);
+    width: 100%;
+    height: 90px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 60px;
+    box-shadow: var(--sombra-suave);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.menu {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px var(--color-principal);
+}
+
+h1 {
+    color: var(--color-texto);
+    margin-left: 15px;
+    font-size: 35px;
+    letter-spacing: .02em;
+}
+
+nav {
+    display: flex;
+    gap: 35px;
+
+    margin-left: 80px;
+}
+
+nav a {
+    color: var(--color-texto);
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+    position: relative;
+    padding-bottom: 4px;
+    transition: color var(--transicion);
+}
+
+nav a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 2px;
+    background: var(--color-principal);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--transicion);
+}
+
+nav a:hover,
+nav a:focus {
+    color: var(--color-principal);
+}
+
+nav a:hover::after,
+nav a:focus::after {
+    transform: scaleX(1);
+}
+
+/* ===== Encabezado de las vistas internas (games/vendedores/ventas/estadisticas) ===== */
+
+center h1 {
+    margin: 2rem 0 .5rem;
+    font-size: 2rem;
+    letter-spacing: .03em;
+}
+
+center > a {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    color: var(--color-principal);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: .85rem;
+    padding: .45rem 1rem;
+    border-radius: 999px;
+    margin-bottom: 1.5rem;
+    transition: background var(--transicion), color var(--transicion), transform var(--transicion);
+}
+
+center > a::before {
+    content: "←";
+}
+
+center > a:hover {
+    background: var(--color-principal-oscuro);
+    color: var(--color-texto);
+    transform: translateY(-1px);
+}
+
+/* ===== Formularios / paneles ===== */
+
+form {
+    margin: 0 auto;
+    width: fit-content;
+    max-width: 92vw;
+
+    background: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-lg);
+    box-shadow: var(--sombra);
+    padding: 1.75rem 2.25rem;
+}
+
+.titulo {
+    display: inline-block;
+    font-size: 1.3rem;
+    margin: 0 0 1.25rem;
+    padding-bottom: .5rem;
+    border-bottom: 2px solid var(--color-principal);
+    color: var(--color-texto);
+}
+
+form .campos {
+    display: grid;
+    grid-template-columns: auto minmax(200px, 1fr);
+    align-items: center;
+    gap: 12px 16px;
+}
+
+label {
+    color: var(--color-texto-secundario);
+    font-weight: 600;
+    font-size: .85rem;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+}
+
+input,
+select,
+textarea {
+    background: var(--color-superficie-alt);
+    border: 1px solid var(--color-borde);
+    border-radius: .45rem;
+    color: var(--color-texto);
+    padding: .55rem .75rem;
+    font-size: .95rem;
+    font-family: inherit;
+    transition: border-color var(--transicion), box-shadow var(--transicion);
+}
+
+textarea {
+    resize: vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--color-principal);
+    box-shadow: 0 0 0 3px rgba(42, 159, 214, .25);
+}
+
+input:disabled {
+    opacity: .65;
+    cursor: not-allowed;
+}
+
+form select {
+    width: 100%;
+}
+
+form .botones {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .6rem;
+    margin: 1.5rem 0 0;
+}
+
+/* ===== Botones ===== */
+
+.btn_agregar,
+.btn_modificar,
+.btn_eliminar,
+.btn_limpiar {
+    background-color: var(--color-principal-oscuro);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: var(--radio);
+    font-weight: 600;
+    letter-spacing: .02em;
+    cursor: pointer;
+    box-shadow: var(--sombra-suave);
+    transition: background var(--transicion), transform var(--transicion), box-shadow var(--transicion);
+}
+
+.btn_agregar:hover,
+.btn_modificar:hover,
+.btn_limpiar:hover {
+    background-color: var(--color-principal);
+    transform: translateY(-2px);
+    box-shadow: var(--sombra);
+}
+
+.btn_eliminar {
+    background-color: var(--color-peligro);
+}
+
+.btn_eliminar:hover {
+    background-color: var(--color-peligro-claro);
+    transform: translateY(-2px);
+    box-shadow: var(--sombra);
+}
+
+.btn_agregar:active,
+.btn_modificar:active,
+.btn_eliminar:active,
+.btn_limpiar:active {
+    transform: translateY(0);
+}
+
+/* ===== Listados ===== */
+
+.listado {
+    margin: 1.75rem auto 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .4rem;
+    max-width: 92vw;
+}
+
+.listado select {
+    width: 60%;
+    min-width: 260px;
+    background: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio);
+    padding: .5rem;
+    color: var(--color-texto);
+    box-shadow: var(--sombra-suave);
+}
+
+.listado select:focus {
+    outline: none;
+    border-color: var(--color-principal);
+}
+
+.listado select option {
+    padding: .4rem;
+}
+
+/* ===== Catalogo de juegos (index.html) ===== */
+
+.juegos {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 50px;
+    padding: 0 20px 50px;
+    flex-wrap: wrap;
+}
+
+.game-card {
+    width: 260px;
+    text-align: center;
+    color: var(--color-texto);
+    background: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-lg);
+    box-shadow: var(--sombra);
+    overflow: hidden;
+    padding-bottom: 1.1rem;
+    transition: transform var(--transicion), box-shadow var(--transicion);
+}
+
+.game-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 18px 34px rgba(0, 0, 0, .45);
+}
+
+.game-card img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    display: block;
+    transition: transform .4s ease;
+}
+
+.game-card:hover img {
+    transform: scale(1.06);
+}
+
+.game-card h2 {
+    margin: 1rem 1rem 0;
+    font-size: 1.35rem;
+}
+
+.game-card p {
+    margin: .5rem 1rem 0;
+    font-size: .92rem;
+    color: var(--color-texto-secundario);
+    line-height: 1.45;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 768px) {
+    header {
+        padding: 0 20px;
+        height: auto;
+        flex-wrap: wrap;
+        gap: .75rem;
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+
+    nav {
+        margin-left: 0;
+        gap: 18px;
+        flex-wrap: wrap;
+    }
+
+    h1 {
+        font-size: 26px;
+    }
+
+    form {
+        padding: 1.25rem;
+    }
+
+    form .campos {
+        grid-template-columns: 1fr;
+    }
+
+    .listado select {
+        width: 100%;
+    }
+}
+
+
+/* ===== Integración API pública ===== */
+.api-section {
+    width: min(1180px, 94vw);
+    margin: 1rem auto 3rem;
+    padding: 1.5rem;
+    background: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-lg);
+    box-shadow: var(--sombra);
+}
+
+.api-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.api-header h2 {
+    margin: 0;
+    color: var(--color-texto);
+}
+
+.api-header p,
+.api-status,
+.api-credit {
+    color: var(--color-texto-secundario);
+}
+
+.api-status {
+    margin: .75rem 0 1rem;
+}
+
+.btn_api {
+    background: var(--color-principal-oscuro);
+    color: #fff;
+    border: 1px solid var(--color-principal);
+    border-radius: var(--radio);
+    padding: .65rem 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background var(--transicion), transform var(--transicion);
+}
+
+.btn_api:hover,
+.btn_api:focus-visible {
+    background: var(--color-principal);
+    transform: translateY(-2px);
+}
+
+.api-card {
+    min-height: 100%;
+    color: var(--color-texto);
+    background: var(--color-superficie-alt);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-lg);
+    overflow: hidden;
+    box-shadow: var(--sombra-suave);
+    padding: 0;
+    transition: transform var(--transicion), box-shadow var(--transicion);
+}
+
+.api-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--sombra);
+}
+
+.api-card img {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+    display: block;
+}
+
+.api-card-contenido {
+    padding: 1rem;
+}
+
+.api-card h3 {
+    margin: 0 0 .65rem;
+    font-size: 1.15rem;
+}
+
+.api-card p {
+    margin: .25rem 0;
+    color: var(--color-texto-secundario);
+    font-size: .9rem;
+}
+
+.api-card a,
+.api-credit a {
+    color: var(--color-principal);
+    font-weight: 700;
+}
+
+.api-credit {
+    margin: 1rem 0 0;
+    font-size: .82rem;
+}
+
+.site-footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--color-texto-secundario);
+    border-top: 1px solid var(--color-borde);
+    margin-top: 2rem;
+}
+
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 1000;
+    background: var(--color-principal);
+    color: #fff;
+    padding: .75rem 1rem;
+}
+
+.skip-link:focus {
+    left: 1rem;
+    top: 1rem;
+}
+
+:focus-visible {
+    outline: 3px solid rgba(42, 159, 214, .7);
+    outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+    .api-section {
+        padding: 1rem;
+    }
+
+    .api-card img {
+        height: 210px;
+    }
+}
