@@ -41,8 +41,39 @@
             <p>Mundo abierto lleno de acción y aventura.</p>
         </div>
     </section>
+    <section class="container mt-4 mb-4" aria-labelledby="info-clima">
+        <div class="card p-3">
+            <h2 id="info-clima">Clima y fecha</h2>
+            <p id="fecha-actual">Cargando fecha...</p>
+            <p id="clima-actual">Cargando clima...</p>
+        </div>
+    </section>
 </main>
 
 <footer class="site-footer">GameStore - Gestión de juegos, vendedores y ventas.</footer>
+
+<script type="module">
+    import { obtenerClima } from "./Dominio/Servicios/clima.js";
+
+    const fecha = document.getElementById("fecha-actual");
+    const clima = document.getElementById("clima-actual");
+
+    fecha.textContent = new Date().toLocaleDateString("es-UY", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+    });
+
+    async function mostrarClima() {
+        try {
+            const datos = await obtenerClima();
+            clima.textContent = `Temperatura actual: ${datos.temperatura} °C`;
+        } catch (error) {
+            clima.textContent = "No se pudo obtener el clima.";
+        }
+    }
+
+    mostrarClima();
+</script>
 </body>
 </html>
