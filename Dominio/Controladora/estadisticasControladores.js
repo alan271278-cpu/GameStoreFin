@@ -1,67 +1,48 @@
-import { Memoria } from "../Servicios/memoria";
+import { Memoria } from "../Servicios/memoria.js";
 
-function CargoDatosEstadisticas(){
-    const LaMemoria = new Memoria();
-    ventas = LaMemoria.leer('ventas') || [];
-    games = LaMemoria.leer('games') || [];
-    vendedores = LaMemoria.leer('vendedores') || [];
-    
+const LaMemoria = new Memoria();
+let ventas = [];
+let games = [];
+let vendedores = [];
+
+function CargoDatosEstadisticas() {
+    ventas = LaMemoria.leer("ventas") || [];
+    games = LaMemoria.leer("games") || [];
+    vendedores = LaMemoria.leer("vendedores") || [];
     TotalRecaudado();
     GameMasVendido();
     MejorVendedor();
     GamesConStock();
 }
 
-function TotalRecaudado(){
-    let total = 0;
-    for (const unaVenta of ventas) {
-        total = total + unaVenta.total;
-    }
-    document.getElementById('totalRecaudado').value = total.toFixed(2);
+function TotalRecaudado() {
+    const total = ventas.reduce((acumulado, unaVenta) => acumulado + Number(unaVenta.total || 0), 0);
+    document.getElementById("totalRecaudado").value = total.toFixed(2);
 }
 
-function GamesConStock(){
-    let lista = document.getElementById('games-con-stock').options;
+function GamesConStock() {
+    const lista = document.getElementById("games-con-stock");
     lista.length = 0;
-
     for (const objGame of games) {
-        if(objGame.stock > 0){
-            let texto = 'Codigo: ' + objGame.codigo + ' : Nombre: ' + objGame.nombre 
-            + ' - Precio: ' + objGame.precio + ' - Stock: ' + objGame.stock;
-            let elemento = new Option(texto, objGame.codigo);
-            lista.add(elemento);
+        if (Number(objGame.stock) > 0) {
+            const texto = `Codigo: ${objGame.codigo} : Nombre: ${objGame.nombre} - Precio: ${objGame.precio} - Stock: ${objGame.stock}`;
+            lista.add(new Option(texto, objGame.codigo));
         }
     }
 }
 
-function GameMasVendido(){
-    let mayor = 0;
-    let objMayor;
-    for (const unGame of games) {
-        if(unGame.cantVendidos > mayor){
-            mayor = unGame.cantVendidos;
-            objMayor = unGame;
-        }
-    }
-    if(mayor > 0){
-        document.getElementById('masVendido').value = objMayor.nombre 
-    + " con " + objMayor.cantVendidos + " unidades";
-    }else{
-        document.getElementById('masVendido').value = "No hay datos"
-    }
-    
-}
-
-function MejorVendedor(){
-    let mayor = 0;
-    let objMayor;
-    for (const unVendedor of vendedores) {
-        if(unVendedor.cantVentas > mayor){
-            mayor = unVendedor.cantVentas;
-            objMayor = unVendedor;
-        }
-    }
-    document.getElementById('mejorVendedor').value = objMayor
-        ? objMayor.nombre + " con " + objMayor.cantVentas + " ventas"
+function GameMasVendido() {
+    const objMayor = games.reduce((mayor, game) => Number(game.cantVendidos || 0) > Number(mayor?.cantVendidos || 0) ? game : mayor, null);
+    document.getElementById("masVendido").value = objMayor && Number(objMayor.cantVendidos) > 0
+        ? `${objMayor.nombre} con ${objMayor.cantVendidos} unidades`
         : "No hay datos";
 }
+
+function MejorVendedor() {
+    const objMayor = vendedores.reduce((mayor, vendedor) => Number(vendedor.cantVentas || 0) > Number(mayor?.cantVentas || 0) ? vendedor : mayor, null);
+    document.getElementById("mejorVendedor").value = objMayor && Number(objMayor.cantVentas) > 0
+        ? `${objMayor.nombre} con ${objMayor.cantVentas} ventas`
+        : "No hay datos";
+}
+
+document.addEventListener("DOMContentLoaded", CargoDatosEstadisticas);

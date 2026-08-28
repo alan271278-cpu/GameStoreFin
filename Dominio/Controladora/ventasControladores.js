@@ -1,144 +1,99 @@
-import { Venta } from "../Clases/venta";
-import { Memoria } from "../Servicios/memoria";
+import { Venta } from "../Clases/venta.js";
+import { Memoria } from "../Servicios/memoria.js";
 
 let ventas = [];
+let games = [];
+let vendedores = [];
+const LaMemoria = new Memoria();
 
-function CargoDatosVentas(){
-    const LaMemoria = new Memoria();
-    ventas = LaMemoria.leer('ventas');
-    games = LaMemoria.leer('games');
-    vendedores = LaMemoria.leer('vendedores');
-    
-    if(!ventas){
-        ventas = [];
-    }
+function CargoDatosVentas() {
+    ventas = LaMemoria.leer("ventas") || [];
+    games = LaMemoria.leer("games") || [];
+    vendedores = LaMemoria.leer("vendedores") || [];
     InicializarVenta();
     CargarVendedores();
     CargarGames();
     ListarVentas();
 }
 
-function CargarVendedores(){
-    let lista = document.getElementById('codigo-vendedor').options;
+function CargarVendedores() {
+    const lista = document.getElementById("codigo-vendedor");
     lista.length = 0;
-
-    let elementoBase = new Option("Seleccione un vendedor", "");
-    lista.add(elementoBase);
-
-    for (let objVendedor of vendedores) {
-        let elemento = new Option(objVendedor.nombre, objVendedor.codigo);
-        lista.add(elemento);
-    }
+    lista.add(new Option("Seleccione un vendedor", ""));
+    for (const objVendedor of vendedores) lista.add(new Option(objVendedor.nombre, objVendedor.codigo));
 }
 
-function CargarGames(){
-    let lista = document.getElementById('codigo-game').options;
+function CargarGames() {
+    const lista = document.getElementById("codigo-game");
     lista.length = 0;
-                    
-    let elementoBase = new Option("Seleccione un game", "");
-    lista.add(elementoBase);
-
-    for (let objGame of games) {
-        let elemento = new Option(objGame.nombre, objGame.codigo);
-        lista.add(elemento);
-    }
+    lista.add(new Option("Seleccione un game", ""));
+    for (const objGame of games) lista.add(new Option(objGame.nombre, objGame.codigo));
 }
 
-function CargarPrecioGame(){
-    document.getElementById('precio-game').value = "";
-
-    let codigoGame = document.getElementById('codigo-game').value;
-    for (let objGame of games) {
-        if(objGame.codigo == codigoGame){
-            document.getElementById('precio-game').value = objGame.precio;
-        }
-    }
+function CargarPrecioGame() {
+    const codigoGame = document.getElementById("codigo-game").value;
+    const unGame = BuscarGame(codigoGame);
+    document.getElementById("precio-game").value = unGame ? unGame.precio : "";
+    CalculoTotal();
 }
 
-function ActualizarStock(pCodigoGame, pCantidad){
-    for (const unGame of games) {
-        if(unGame.codigo == pCodigoGame){
-            unGame.stock = unGame.stock - pCantidad;
-        }
-    }
+function BuscarGame(codigo) {
+    return games.find((objGame) => objGame.codigo === codigo) || null;
 }
 
-function DevolverStock(pCodigoGame, pCantidad){
-    for (const unGame of games) {
-        if(unGame.codigo == pCodigoGame){
-            unGame.stock = unGame.stock + pCantidad;
-        }
-    }
+function BuscarVendedor(codigo) {
+    return vendedores.find((objVendedor) => objVendedor.codigo === codigo) || null;
 }
 
-function ActualizarCantidadVendidos(pCodigoGame, pCantidad){
-    for (const unGame of games) {
-        if(unGame.codigo == pCodigoGame){
-            unGame.cantVendidos = unGame.cantVendidos + pCantidad;
-        }
-    }
+function ActualizarStock(codigoGame, cantidad) {
+    const unGame = BuscarGame(codigoGame);
+    if (unGame) unGame.stock -= cantidad;
 }
 
-function DevolverCantidadVendidos(pCodigoGame, pCantidad){
-    for (const unGame of games) {
-        if(unGame.codigo == pCodigoGame){
-            unGame.cantVendidos = unGame.cantVendidos - pCantidad;
-        }
-    }
+function DevolverStock(codigoGame, cantidad) {
+    const unGame = BuscarGame(codigoGame);
+    if (unGame) unGame.stock += cantidad;
 }
 
-function DevolverCantidadVentas(pCodigoVendedor){
-    for (const unVendedor of vendedores) {
-        if(unVendedor.codigo == pCodigoVendedor){
-            unVendedor.cantVentas -= 1;
-        }
-    }
+function ActualizarCantidadVendidos(codigoGame, cantidad) {
+    const unGame = BuscarGame(codigoGame);
+    if (unGame) unGame.cantVendidos += cantidad;
 }
 
-function ActualizarCantidadVentas(pCodigoVendedor){
-    for (const unVendedor of vendedores) {
-        if(unVendedor.codigo == pCodigoVendedor){
-            unVendedor.cantVentas += 1;
-        }
-    }
+function DevolverCantidadVendidos(codigoGame, cantidad) {
+    const unGame = BuscarGame(codigoGame);
+    if (unGame) unGame.cantVendidos = Math.max(0, unGame.cantVendidos - cantidad);
 }
 
-function CalculoTotal(){
-    let precio = document.getElementById('precio-game').value;
-    let cantidad = document.getElementById('cantidad').value;
-    let total = 0;
-    if(cantidad > 0){
-        total = precio * cantidad;
-        document.getElementById('total').value = total;
-    }
+function ActualizarCantidadVentas(codigoVendedor) {
+    const unVendedor = BuscarVendedor(codigoVendedor);
+    if (unVendedor) unVendedor.cantVentas += 1;
 }
 
-function ListarVentas(){
-    let lista = document.getElementById('lista-ventas').options;
+function DevolverCantidadVentas(codigoVendedor) {
+    const unVendedor = BuscarVendedor(codigoVendedor);
+    if (unVendedor) unVendedor.cantVentas = Math.max(0, unVendedor.cantVentas - 1);
+}
+
+function CalculoTotal() {
+    const precio = Number(document.getElementById("precio-game").value);
+    const cantidad = Number(document.getElementById("cantidad").value);
+    document.getElementById("total").value = Number.isFinite(precio) && cantidad > 0 ? (precio * cantidad).toFixed(2) : "";
+}
+
+function ListarVentas() {
+    const lista = document.getElementById("lista-ventas");
     lista.length = 0;
-
-    for (let objVenta of ventas) {
-        let texto = 'Codigo: ' + objVenta.codigo + ' : Fecha: ' + objVenta.fecha 
-        + ' - Game: ' + objVenta.game.nombre + ' - Total: ' + objVenta.total;
-        let elemento = new Option(texto, objVenta.codigo);
-        lista.add(elemento);
+    for (const objVenta of ventas) {
+        const nombreGame = objVenta.game?.nombre || "Game no disponible";
+        const texto = `Codigo: ${objVenta.codigo} : Fecha: ${objVenta.fecha} - Game: ${nombreGame} - Total: ${objVenta.total}`;
+        lista.add(new Option(texto, objVenta.codigo));
     }
 }
-function InicializarVenta(){
 
-    let hoy = new Date();
-    console.log("HOY", hoy);
-    
-    let anio = hoy.getFullYear();
-    let mes = ""+(hoy.getMonth()+1);
-    mes = (mes.length == 1)?"0"+mes:mes;
-    let dia = ""+hoy.getDate();
-    dia = (dia.length == 1)?"0"+dia:dia;
-
-    let fecha = anio + "-" + mes + "-" + dia;
-    console.log("FECHA", fecha);
-    
-    // Luego de agregarlas al array, limpio las cajas de texto
+function InicializarVenta() {
+    const hoy = new Date();
+    const fecha = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, "0")}-${String(hoy.getDate()).padStart(2, "0")}`;
     document.getElementById("codigo").value = "";
     document.getElementById("fecha").value = fecha;
     document.getElementById("codigo-vendedor").value = "";
@@ -146,160 +101,167 @@ function InicializarVenta(){
     document.getElementById("precio-game").value = "";
     document.getElementById("cantidad").value = "";
     document.getElementById("total").value = "";
-    // Pongo el foco en la caja de texto nombre
     document.getElementById("codigo").focus();
 }
 
-function AgregarVenta(){
-    // Leo los datos ingresados de las cajas de texto
-    let codigo = document.getElementById("codigo").value;
-    let fecha = document.getElementById("fecha").value;
-    let codigoVendedor = document.getElementById("codigo-vendedor").value;
-    let codigoGame = document.getElementById("codigo-game").value;
-    let cantidad = parseInt(document.getElementById("cantidad").value);
-    let total = parseInt(document.getElementById("total").value);
+function AgregarVenta() {
+    const codigo = document.getElementById("codigo").value.trim();
+    const fecha = document.getElementById("fecha").value;
+    const codigoVendedor = document.getElementById("codigo-vendedor").value;
+    const codigoGame = document.getElementById("codigo-game").value;
+    const cantidad = Number(document.getElementById("cantidad").value);
 
-    // Debemos agregar validacion para las cajas de texto que no vengan vacías
-    if(codigo == "" || fecha == "" || codigoVendedor == "" || codigoGame == ""){
+    if (!codigo || !fecha || !codigoVendedor || !codigoGame) {
         alert("Debe ingresar todos los campos!");
         return;
     }
-    if(isNaN(cantidad) || isNaN(total)){
-        alert("Los valores ingresados no son correctos!");
+    if (!Number.isInteger(cantidad) || cantidad <= 0) {
+        alert("La cantidad debe ser un número entero mayor que cero.");
+        return;
+    }
+    if (ventas.some((venta) => String(venta.codigo) === codigo)) {
+        alert("Ya existe una venta con ese código.");
         return;
     }
 
-    let unGame = BuscarGame(codigoGame);
-    // validar que el objeto juguete existe
-    let unVendedor = BuscarVendedor(codigoVendedor);
-    // validar que el objeto vendedor existe
-    let unaVenta = new Venta(codigo, fecha, unGame, unVendedor, cantidad, total);
-    ventas.push(unaVenta);
+    const unGame = BuscarGame(codigoGame);
+    const unVendedor = BuscarVendedor(codigoVendedor);
+    if (!unGame || !unVendedor) {
+        alert("El vendedor o el juego seleccionado no existe.");
+        return;
+    }
+    if (cantidad > Number(unGame.stock)) {
+        alert("No hay stock suficiente para realizar la venta.");
+        return;
+    }
 
-    const LaMemoria = new Memoria();
-    LaMemoria.escribir('ventas', ventas);
-
-    // Luego de la venta tengo que actualizar el stock del juguete vendido
-    // tambien sumarle la cantidad vendida al nuevo atributo
+    const total = Number(unGame.precio) * cantidad;
+    ventas.push(new Venta(codigo, fecha, unGame, unVendedor, cantidad, total));
     ActualizarStock(codigoGame, cantidad);
     ActualizarCantidadVendidos(codigoGame, cantidad);
-    LaMemoria.escribir('games', games);
-
-    // actualizar cantventas del vendedor y actualizar localStorage del array de vendedores
     ActualizarCantidadVentas(codigoVendedor);
-    
-    LaMemoria.escribir('vendedores', vendedores);
 
+    LaMemoria.escribir("ventas", ventas);
+    LaMemoria.escribir("games", games);
+    LaMemoria.escribir("vendedores", vendedores);
     InicializarVenta();
     ListarVentas();
     alert("Se agrego la venta correctamente");
-
 }
 
-function SeleccionarVenta(){
-    let codigoSeleccionado = document.getElementById('lista-ventas').value;
-    
-    for (let objVenta of ventas) {
-        if(objVenta.codigo == codigoSeleccionado){
-            document.getElementById("codigo").value = objVenta.codigo;
-            document.getElementById("fecha").value = objVenta.fecha;
-            document.getElementById("codigo-vendedor").value = objVenta.vendedor.codigo;
-            document.getElementById("codigo-game").value = objVenta.game.codigo;
-            CargarPrecioGame();
-            document.getElementById("cantidad").value = objVenta.cantidad;
-            document.getElementById("total").value = objVenta.total;
-        }
-    }
+function SeleccionarVenta() {
+    const codigoSeleccionado = document.getElementById("lista-ventas").value;
+    const objVenta = ventas.find((venta) => String(venta.codigo) === codigoSeleccionado);
+    if (!objVenta) return;
+
+    document.getElementById("codigo").value = objVenta.codigo;
+    document.getElementById("fecha").value = objVenta.fecha;
+    document.getElementById("codigo-vendedor").value = objVenta.vendedor?.codigo || "";
+    document.getElementById("codigo-game").value = objVenta.game?.codigo || "";
+    CargarPrecioGame();
+    document.getElementById("cantidad").value = objVenta.cantidad;
+    document.getElementById("total").value = objVenta.total;
 }
 
-function ModificarVenta(){
-    // Leo el codigo desde la linea seleccionada
-    let codigoSeleccionado = document.getElementById("lista-ventas").value;
-    // Leo los datos ingresados de las cajas de texto
-    let fecha = document.getElementById("fecha").value;
-    let codigoVendedor = document.getElementById("codigo-vendedor").value;
-    let codigoGame = document.getElementById("codigo-game").value;
-    let cantidad = parseInt(document.getElementById("cantidad").value);
-    let total = parseInt(document.getElementById("total").value);
+function ModificarVenta() {
+    const codigoSeleccionado = document.getElementById("lista-ventas").value;
+    const fecha = document.getElementById("fecha").value;
+    const codigoVendedor = document.getElementById("codigo-vendedor").value;
+    const codigoGame = document.getElementById("codigo-game").value;
+    const cantidad = Number(document.getElementById("cantidad").value);
 
-    // Debemos agregar validacion para las cajas de texto que no vengan vacías
-    if(codigo == "" || fecha == "" || codigoVendedor == "" || codigoGame == ""){
-        alert("Debe ingresar todos los campos!");
+    if (!codigoSeleccionado || !fecha || !codigoVendedor || !codigoGame) {
+        alert("Debe seleccionar una venta e ingresar todos los campos!");
         return;
     }
-    if(isNaN(cantidad) || isNaN(total)){
-        alert("Los valores ingresados no son correctos!");
+    if (!Number.isInteger(cantidad) || cantidad <= 0) {
+        alert("La cantidad debe ser un número entero mayor que cero.");
         return;
     }
 
-    let unGame = BuscarGame(codigoGame);
-    // validar que el objeto juguete existe
-    let unVendedor = BuscarVendedor(codigoVendedor);
+    const unVenta = ventas.find((venta) => String(venta.codigo) === codigoSeleccionado);
+    const unGame = BuscarGame(codigoGame);
+    const unVendedor = BuscarVendedor(codigoVendedor);
+    if (!unVenta || !unGame || !unVendedor) {
+        alert("No se pudo encontrar la venta, el juego o el vendedor.");
+        return;
+    }
 
+    // Se devuelven los datos de la venta anterior antes de aplicar los nuevos.
+    DevolverStock(unVenta.game.codigo, unVenta.cantidad);
+    DevolverCantidadVendidos(unVenta.game.codigo, unVenta.cantidad);
+    if (unVenta.vendedor?.codigo !== codigoVendedor) {
+        DevolverCantidadVentas(unVenta.vendedor?.codigo);
+        ActualizarCantidadVentas(codigoVendedor);
+    }
 
-    // Cargo el objeto vendedor desde la funcion buscar
-    let unVenta = BuscarVenta(codigoSeleccionado);
+    if (cantidad > Number(unGame.stock)) {
+        // Restauramos el estado anterior si la nueva cantidad no es válida.
+        ActualizarStock(unVenta.game.codigo, unVenta.cantidad);
+        ActualizarCantidadVendidos(unVenta.game.codigo, unVenta.cantidad);
+        alert("No hay stock suficiente para realizar la modificación.");
+        return;
+    }
 
     unVenta.fecha = fecha;
     unVenta.vendedor = unVendedor;
     unVenta.game = unGame;
     unVenta.cantidad = cantidad;
-    unVenta.total = total;
+    unVenta.total = Number(unGame.precio) * cantidad;
 
-    const LaMemoria = new Memoria();
-    LaMemoria.escribir('ventas', ventas);
-    
+    ActualizarStock(codigoGame, cantidad);
+    ActualizarCantidadVendidos(codigoGame, cantidad);
+
+    LaMemoria.escribir("ventas", ventas);
+    LaMemoria.escribir("games", games);
+    LaMemoria.escribir("vendedores", vendedores);
     InicializarVenta();
     ListarVentas();
     alert("Se modifico la venta correctamente");
 }
 
-function BuscarVenta(pCodigo){
-    for (let objVenta of ventas) {
-        if(objVenta.codigo == pCodigo){
-            return objVenta;
-        }
-    }
-    return null;
-}
-
-
-function EliminarVenta(){
-    // Leo el codigo desde la linea seleccionada
-    let codigoSeleccionado = document.getElementById("lista-ventas").value;
-    let posicionVenta = -1;
-
-    // Debemos agregar validacion para las cajas de texto que no vengan vacías
-    if(codigoSeleccionado == ""){
+function EliminarVenta() {
+    const codigoSeleccionado = document.getElementById("lista-ventas").value;
+    if (!codigoSeleccionado) {
         alert("Debe seleccionar una Venta!");
         return;
     }
 
-    let unaVenta = BuscarVenta(codigoSeleccionado);
-
-    for (let pos = 0; pos < ventas.length; pos++) {
-        if(ventas[pos].codigo == codigoSeleccionado){
-            posicionVenta = pos;
-        }
-    }
-    if(posicionVenta != -1){
-        ventas.splice(posicionVenta, 1);
+    const posicionVenta = ventas.findIndex((venta) => String(venta.codigo) === codigoSeleccionado);
+    if (posicionVenta === -1) {
+        alert("No se encontró la venta seleccionada.");
+        return;
     }
 
-    const LaMemoria = new Memoria();
-    LaMemoria.escribir('ventas', ventas);
-
-    // Luego de la venta tengo que actualizar el stock del juguete vendido
-    // tambien sumarle la cantidad vendida al nuevo atributo
+    const unaVenta = ventas[posicionVenta];
+    ventas.splice(posicionVenta, 1);
     DevolverStock(unaVenta.game.codigo, unaVenta.cantidad);
     DevolverCantidadVendidos(unaVenta.game.codigo, unaVenta.cantidad);
-    LaMemoria.escribir('games', games);
+    DevolverCantidadVentas(unaVenta.vendedor?.codigo);
 
-    // actualizar cantventas del vendedor y actualizar localStorage del array de vendedores
-    DevolverCantidadVentas(unaVenta.vendedor.codigo);
-    LaMemoria.escribir('vendedores', vendedores);
-
+    LaMemoria.escribir("ventas", ventas);
+    LaMemoria.escribir("games", games);
+    LaMemoria.escribir("vendedores", vendedores);
     InicializarVenta();
     ListarVentas();
     alert("Se elimino la venta correctamente");
 }
+
+document.addEventListener("click", (evento) => {
+    const boton = evento.target.closest("[data-action]");
+    if (!boton) return;
+    const acciones = { agregar: AgregarVenta, modificar: ModificarVenta, eliminar: EliminarVenta, limpiar: InicializarVenta };
+    const accion = acciones[boton.dataset.action];
+    if (accion) accion();
+});
+
+document.addEventListener("change", (evento) => {
+    if (evento.target.id === "codigo-game") CargarPrecioGame();
+    if (evento.target.id === "lista-ventas") SeleccionarVenta();
+});
+
+document.addEventListener("blur", (evento) => {
+    if (evento.target.id === "cantidad") CalculoTotal();
+}, true);
+
+document.addEventListener("DOMContentLoaded", CargoDatosVentas);

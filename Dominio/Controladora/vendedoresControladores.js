@@ -1,138 +1,122 @@
-import { Vendedor } from "../Clases/vendedor";
-import { Memoria } from "../Servicios/memoria";
-
+import { Vendedor } from "../Clases/vendedor.js";
+import { Memoria } from "../Servicios/memoria.js";
 
 let vendedores = [];
+const LaMemoria = new Memoria();
 
-function CargoDatosVendedor(){
-    const LaMemoria = new Memoria();
-    vendedores = LaMemoria.leer('vendedores');
-    
-    if(!vendedores){
-        vendedores = [];
-    }
+function CargoDatosVendedor() {
+    vendedores = LaMemoria.leer("vendedores") || [];
     InicializarVendedor();
     ListarVendedores();
-   
 }
 
-function AgregarVendedor(){
-    // Leo los datos ingresados de las cajas de texto
-    let codigo = document.getElementById("codigo").value;
-    let nombre = document.getElementById("nombre").value;
-    let cedula = document.getElementById("cedula").value;
+function AgregarVendedor() {
+    const codigo = document.getElementById("codigo").value.trim();
+    const nombre = document.getElementById("nombre").value.trim();
+    const cedula = document.getElementById("cedula").value.trim();
 
-    // Debemos agregar validacion para las cajas de texto que no vengan vacías
-    if(cedula == "" || nombre == "" || codigo == ""){
+    if (!codigo || !nombre || !cedula) {
         alert("Debe ingresar todos los campos!");
         return;
     }
+    if (BuscarVendedor(codigo)) {
+        alert("Ya existe un vendedor con ese código.");
+        return;
+    }
 
-    let unVendedor = new Vendedor(codigo, nombre, cedula);
-    vendedores.push(unVendedor);
-
-    const LaMemoria = new Memoria();
-    LaMemoria.escribir('vendedores', vendedores);
-
+    vendedores.push(new Vendedor(codigo, nombre, cedula));
+    LaMemoria.escribir("vendedores", vendedores);
     InicializarVendedor();
     ListarVendedores();
     alert("Se agrego el vendedor correctamente");
-
 }
 
-function SeleccionarVendedor(){
-    let codigoSeleccionado = document.getElementById('lista-vendedores').value;
-    
-    for (let objVendedor of vendedores) {
-        if(objVendedor.codigo == codigoSeleccionado){
-            document.getElementById("codigo").value = objVendedor.codigo;
-            document.getElementById("nombre").value = objVendedor.nombre;
-            document.getElementById("cedula").value = objVendedor.cedula;
-        }
-    }
+function SeleccionarVendedor() {
+    const codigoSeleccionado = document.getElementById("lista-vendedores").value;
+    const objVendedor = BuscarVendedor(codigoSeleccionado);
+    if (!objVendedor) return;
+
+    document.getElementById("codigo").value = objVendedor.codigo;
+    document.getElementById("nombre").value = objVendedor.nombre;
+    document.getElementById("cedula").value = objVendedor.cedula;
 }
 
-function ListarVendedores(){
-    let lista = document.getElementById('lista-vendedores').options;
+function ListarVendedores() {
+    const lista = document.getElementById("lista-vendedores");
     lista.length = 0;
 
-    for (let objVendedor of vendedores) {
-        let texto = 'Codigo: ' + objVendedor.codigo + ' : Nombre: ' + objVendedor.nombre 
-        + ' - Cedula: ' + objVendedor.cedula;
-        let elemento = new Option(texto, objVendedor.codigo);
-        lista.add(elemento);
+    for (const objVendedor of vendedores) {
+        const texto = `Codigo: ${objVendedor.codigo} : Nombre: ${objVendedor.nombre} - Cedula: ${objVendedor.cedula}`;
+        lista.add(new Option(texto, objVendedor.codigo));
     }
 }
-function InicializarVendedor(){
-    
-    // Luego de agregarlas al array, limpio las cajas de texto
+
+function InicializarVendedor() {
     document.getElementById("codigo").value = "";
     document.getElementById("cedula").value = "";
     document.getElementById("nombre").value = "";
-    // Pongo el foco en la caja de texto nombre
     document.getElementById("codigo").focus();
 }
 
-function ModificarVendedor(){
-    // Leo el codigo desde la linea seleccionada
-    let codigoSeleccionado = document.getElementById("lista-vendedores").value;
-    // Leo los datos ingresados de las cajas de texto
-    let nombre = document.getElementById("nombre").value;
-    let cedula = document.getElementById("cedula").value;
+function ModificarVendedor() {
+    const codigoSeleccionado = document.getElementById("lista-vendedores").value;
+    const nombre = document.getElementById("nombre").value.trim();
+    const cedula = document.getElementById("cedula").value.trim();
 
-    // Debemos agregar validacion para las cajas de texto que no vengan vacías
-    if(codigoSeleccionado == "" || nombre == "" || cedula == ""){
-        alert("Debe ingresar todos los campos!");
+    if (!codigoSeleccionado || !nombre || !cedula) {
+        alert("Debe seleccionar un vendedor e ingresar todos los campos!");
         return;
     }
-    // Cargo el objeto vendedor desde la funcion buscar
-    let unVendedor = BuscarVendedor(codigoSeleccionado);
+
+    const unVendedor = BuscarVendedor(codigoSeleccionado);
+    if (!unVendedor) {
+        alert("No se encontró el vendedor seleccionado.");
+        return;
+    }
 
     unVendedor.nombre = nombre;
     unVendedor.cedula = cedula;
-
-    const LaMemoria = new Memoria();
-    LaMemoria.escribir('vendedores', vendedores);
-    
+    LaMemoria.escribir("vendedores", vendedores);
     InicializarVendedor();
     ListarVendedores();
-      alert("Se modifico el vendedor correctamete");
-  
+    alert("Se modifico el vendedor correctamente");
 }
 
-function BuscarVendedor(pCodigo){
-    for (let objVendedor of vendedores) {
-        if(objVendedor.codigo == pCodigo){
-            return objVendedor;
-        }
-    }
-    return null;
+function BuscarVendedor(pCodigo) {
+    return vendedores.find((objVendedor) => objVendedor.codigo === pCodigo) || null;
 }
 
-function EliminarVendedor(){
-    // Leo el codigo desde la linea seleccionada
-    let codigoSeleccionado = document.getElementById("lista-vendedores").value;
-    let posicionVendedor = -1;
-
-    // Debemos agregar validacion para las cajas de texto que no vengan vacías
-    if(codigoSeleccionado == ""){
+function EliminarVendedor() {
+    const codigoSeleccionado = document.getElementById("lista-vendedores").value;
+    if (!codigoSeleccionado) {
         alert("Debe seleccionar un Vendedor!");
         return;
     }
 
-    for (let pos = 0; pos < vendedores.length; pos++) {
-        if(vendedores[pos].codigo == codigoSeleccionado){
-            posicionVendedor = pos;
-        }
-    }
-    if(posicionVendedor != -1){
-        vendedores.splice(posicionVendedor, 1);
+    const posicionVendedor = vendedores.findIndex((objVendedor) => objVendedor.codigo === codigoSeleccionado);
+    if (posicionVendedor === -1) {
+        alert("No se encontró el vendedor seleccionado.");
+        return;
     }
 
-    const LaMemoria = new Memoria();
-    LaMemoria.escribir('vendedores', vendedores);
-
+    vendedores.splice(posicionVendedor, 1);
+    LaMemoria.escribir("vendedores", vendedores);
     InicializarVendedor();
     ListarVendedores();
     alert("El vendedor se elimino correctamente");
 }
+
+document.addEventListener("click", (evento) => {
+    const boton = evento.target.closest("[data-action]");
+    if (!boton) return;
+
+    const acciones = { agregar: AgregarVendedor, modificar: ModificarVendedor, eliminar: EliminarVendedor, limpiar: InicializarVendedor };
+    const accion = acciones[boton.dataset.action];
+    if (accion) accion();
+});
+
+document.addEventListener("change", (evento) => {
+    if (evento.target.id === "lista-vendedores") SeleccionarVendedor();
+});
+
+document.addEventListener("DOMContentLoaded", CargoDatosVendedor);
