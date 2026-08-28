@@ -56,7 +56,9 @@ Abrir el proyecto mediante un servidor local para que los módulos ES6 funcionen
 
 ## Publicación
 
-El repositorio puede publicarse con GitHub Pages. La URL final depende del repositorio y de la configuración de GitHub del equipo.
+El repositorio fue publicado en Netlify. La URL final depende del repositorio y de la configuración de GitHub del equipo.
+Netlify: https://gorgeous-flan-7e2f20.netlify.app
+Github: https://github.com/alan271278-cpu/GameStoreFin.git
 
 ## Decisiones de desarrollo
 
